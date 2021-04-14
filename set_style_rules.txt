@@ -1,0 +1,24 @@
+!!!!!!!  Bond Part!!!!!!!!!
+
+###bond style set as harmanic
+#    1 (first atom)    2 (second atom)     1 (founction number)  0.19800 (distance constant nm) 80000 (energy constant kcal); DC(C)-DC(C)
+
+!!!!!!!  Angle Part !!!!!!!!!!!!
+
+###    1 (first atom)    2 (second atom)    6 (third atom)     2 (founction No.) 102.00000 (degree)  150 (energy constant); DC(C)-DC(C)-DG(C)         Backbone angles
+###    1 (first atom)    2 (second atom)    3 (third atom)     2 (founction No.) 95.00000 (degree)  210 (energy constant) ; DC                         Sidechain angles
+#    if founction number = 1 , set style as harmonic
+#    if founction number = 2 , set stule as cosine/squared
+
+!!!!!!! Dihedral Part !!!!!!!!!!!
+
+###    1 (first atom)     2 (second atom)    6 (third atom)    7 (fourth atom)     1 (founction No.) 180.00000 (degree)    2 (energy constant)    3 (n) ; DC(C)-DC(C)-DG(C)-DG(C)
+
+###    2 (first atom)     6 (second atom)    7 (third atom)    8 (fourth atom)     9 (founction No.) 85.00000 (degree)    2 (energy constant)    2 (n) ; DC(C)-DG(C)-DG(C)-DG(C)
+###    2 (first atom)     6 (second atom)    7 (third atom)    8 (fourth atom)     9 (founction No.) 160.00000 (degree)    2 (energy constant)    3 (n) ; DC(C)-DG(C)-DG(C)-DG(C)
+
+###    1 (first atom)     2 (second atom)    3 (third atom)    4 (fourth atom)     2 (founction No.) -90.00000 (degree)   20 (energy constant); DC
+#if founction number = 1 or 9 set style as fourier
+#if founction number = 2 set style as quadratic
+
+PS: if founction number = 9 set neighbor founction number = 9 in same coeff
