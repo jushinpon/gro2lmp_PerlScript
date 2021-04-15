@@ -43,9 +43,9 @@ for (1..@{$bondtype2name_a}){
 }
 #fake bond
 my $type = scalar @{$bondtype2name_a} + 1;	
-for (@{$ebond_a}){	
-	print $df "bond_coeff $type @{$_}\n";
-}
+#for (@{$ebond_a}){	
+	print $df "bond_coeff $type 0.0 2.5 #for fake bond only\n";
+#}
 
 print $df "\n";
 print $df "angle_style hybrid $angsty{1} $angsty{2}\n";
