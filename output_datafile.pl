@@ -17,12 +17,12 @@ open my $df, "> ./output_datafile/output.data";
 print $df "#lammps data file from Perl script\n";
 print $df "\n";
 print $df scalar(@{$atomobj_a}) . " atoms\n";
-print $df scalar(@{$bondobj_a}) +scalar(@{$ebond_a}) . " bonds\n";# real + fake bonds 
+print $df scalar(@{$bondobj_a}) + scalar(@{$ebond_a}) + scalar(@{$cbond_a}) . " bonds\n";# real + fake bonds 
 print $df scalar(@{$angleobj_a}) . " angles\n";
 print $df scalar(@{$Bdihobj_a}) + scalar(@{$Sdihobj_a}) . " dihedrals\n";
 print $df "\n";
 print $df scalar(@{$atomtype_a}) . " atom types\n";
-print $df scalar(@{$bondtype2name_a}) + 1 . " bond types\n";# add one for fake bond
+print $df scalar(@{$bondtype2name_a}) + + scalar(@{$cbond_a}) + 1 . " bond types\n";# add one for fake bond
 print $df scalar(@{$angletype2name_a}) . " angle types\n";
 print $df scalar(@{$Bdihtype2name_a}) + scalar(@{$Sdihtype2name_a}) . " dihedral types\n";
 print $df "\n";
@@ -58,12 +58,22 @@ for (1..@{$bondobj_a}){
     my @bondID = @{$bondobj_a->[$_ - 1]}[0..1];
 	print $df "$_ $type @bondID" . " #$name\n";
 }
+#constrained bond
+my $extra_bondtype = scalar(@{$bondtype2name_a}); # this number so far from the read bond above
+for (0..$#{$cbond_a}){
+    $extra_bondtype++;
+    my $bondID = scalar(@{$bondobj_a}) + $_ + 1;
+    my @pairID = @{$cbond_a->[$_]}[0..1];
+	print $df "$bondID $extra_bondtype @pairID" . " #constrained bond\n";
+}
 
 ## fake bond (the last bond type)
-for (@{$bondobj_a} + 1..@{$ebond_a} + @{$bondobj_a}){
-    my $type = scalar(@{$bondtype2name_a}) + 1;# the last type
-    my @bondID = @{$ebond_a->[$_ - (@{$bondobj_a} + 1)]}[0..1];
-	print $df "$_ $type @bondID" . " #fake bond\n";
+$extra_bondtype++;
+
+for (0..$#{$ebond_a}){
+    my $bondID = scalar(@{$bondobj_a}) + scalar(@{$cbond_a})+ $_ + 1;
+    my @pairID = @{$ebond_a->[$_]}[0..1];
+	print $df "$bondID $extra_bondtype @pairID" . " #fake bond\n";
 }
 print $df "\n";
 print $df "Angles\n";

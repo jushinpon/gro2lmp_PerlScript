@@ -1,5 +1,6 @@
 use warnings;
 use strict;
+my $constrain_k = 100; #for lammps bond coeff
 
 my %pairsty;
    $pairsty{1} = "lj/gromacs/coul/gromacs 9.0 11.0  0.000001 11.0"; 
@@ -41,6 +42,8 @@ for (1..@{$bondtype2name_a}){
 	        # @{$bond_lookup_h{$name}}[1,2];
 	print $df "bond_coeff $_ @{$bond_lookup_h->{$name}}[1,2] #$name\n";
 }
+# constrained bond
+
 #fake bond
 my $type = scalar @{$bondtype2name_a} + 1;	
 #for (@{$ebond_a}){	
@@ -83,21 +86,21 @@ print $df "dielectric $dielectric\n";
 close($df);
 
 ##make restrain files
-open my $rs1, "> ./output_potential/restrain1.in";
-open my $rs2, "> ./output_potential/restrain2.in";
-open my $rl, "> ./output_potential/restrain_leng.in";
-
-print $rs1 "variable firstID index "; 
-print $rs2 "variable secondID index "; 
-print $rl "variable bondleng index "; 
-for (@{$cbond_a}){
-	print $rs1 "&\n\"$_->[0]\" "; 
-	print $rs2 "&\n\"$_->[1]\" "; 
-	print $rl "&\n\"$_->[2]\" ";
-}
-close($rs1);
-close($rs2);
-close($rl);
+#open my $rs1, "> ./output_potential/restrain1.in";
+#open my $rs2, "> ./output_potential/restrain2.in";
+#open my $rl, "> ./output_potential/restrain_leng.in";
+#
+#print $rs1 "variable firstID index "; 
+#print $rs2 "variable secondID index "; 
+#print $rl "variable bondleng index "; 
+#for (@{$cbond_a}){
+#	print $rs1 "&\n\"$_->[0]\" "; 
+#	print $rs2 "&\n\"$_->[1]\" "; 
+#	print $rl "&\n\"$_->[2]\" ";
+#}
+#close($rs1);
+#close($rs2);
+#close($rl);
 
 }# end sub
 1;

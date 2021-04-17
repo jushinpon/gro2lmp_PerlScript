@@ -227,9 +227,9 @@ my @nonbond4alltype = sort keys %nonbond4all_lookup;
 ## the following is for the current system:
 my %nonbond_lookup;
 
-for my $t1 (0..$#atomtype-1)
+for my $t1 (0..$#atomtype)
 {
-	for my $t2 ($t1+1..$#atomtype)
+	for my $t2 ($t1..$#atomtype)
 	{
 			my $a = $atomtype[$t1];# the name of the first atom 
 			my $b = $atomtype[$t2];# the name of the second atom
