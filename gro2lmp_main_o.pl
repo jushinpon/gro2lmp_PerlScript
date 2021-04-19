@@ -10,7 +10,7 @@ my $input = "box.gro"; # pdb or gro
 my $filenamein = "ssDNA";
 my $filenamedata = "ssDNA";
 my $forceconstant = "200";
-my $kj2kcal = "0.2390057361";
+my $kj2kcal = "0.239005";
 my $pairstyle = "lj/gromacs/coul/gromacs 9.0 11.0  0.000001 11.0";
 my $water = "no";
 ############################################################################
@@ -136,24 +136,21 @@ my @Bdihobj;# only keep one dihedral IDs for fourier type with multiplicity high
 my %Bdih_lookup; #look up table for dihedral parameters
 my $Bdc = 1; #backbone dih counter
 my %BdihID2name;
-
 for (@Bdihobj4all){
 	my $a = $_->[0] - 1;# array ID of the first bead 
 	my $b = $_->[1] - 1;# array ID of the second bead
 	my $c = $_->[2] - 1;# array ID of the third bead
 	my $d = $_->[3] - 1;# array ID of the fourth bead
-	my @set_temp = ($a + 1,$b + 1 ,$c + 1,$d + 1);#dihedral set
 	my @temp = ($atomobj[$a][1],$atomobj[$b][1],$atomobj[$c][1],$atomobj[$d][1]);
 	my $link;
-	my @temp_para = ($_->[4],$_->[6],$_->[7],$_->[5]);#current parameters from Bdihobj
-
 	if($atomobj[$a][1] le $atomobj[$d][1]){
-		$link = join ("-",@temp,@set_temp);
+		$link = join ("-",@temp);
 	}
 	else {
-		$link = join ("-",(reverse @temp),@set_temp);
+		$link = join ("-",reverse @temp);
 	}
 # if fourier type exists. lmp format m (by array No.), k, n,degress
+	my @temp_para = ($_->[4],$_->[6],$_->[7],$_->[5]);#current parameters from Bdihobj
 	if($Bdih_lookup{"$link"}){# already exists
 		    my $check = 0;
 		for my $temp (@{$Bdih_lookup{"$link"}}){	
@@ -174,6 +171,9 @@ for (@Bdihobj4all){
 my @Bdihtype2name = sort keys %Bdih_lookup;
 my %Bdihname2type = map {$Bdihtype2name[$_ - 1] => $_ } 1..@Bdihtype2name;
 
+
+
+
 #for (@Bdihtype){my $multi = @{$Bdih_lookup{$_}}; print "Bdih Multiplicity for $_: $multi\n"}
 
 ############################################################ Sidechain DIHEDRALS ##########################################################
@@ -191,8 +191,6 @@ for (@Sdihobj4all){
 	my $b = $_->[1] - 1;# array ID of the second bead
 	my $c = $_->[2] - 1;# array ID of the third bead
 	my $d = $_->[3] - 1;# array ID of the fourth bead
-	my @set_temp = ($a + 1,$b + 1 ,$c + 1,$d + 1);#dihedral set
-
 	my @temp = ($atomobj[$a][1],$atomobj[$b][1],$atomobj[$c][1],$atomobj[$d][1]);
 	my $link;
 	if($atomobj[$a][1] le $atomobj[$d][1]){

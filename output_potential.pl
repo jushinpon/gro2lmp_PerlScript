@@ -1,6 +1,6 @@
 use warnings;
 use strict;
-my $constrain_k = 100; #for lammps bond coeff
+my $constrain_bondk = 100; #for lammps bond coeff
 
 my %pairsty;
    $pairsty{1} = "lj/gromacs/coul/gromacs 9.0 11.0  0.000001 11.0"; 
@@ -43,11 +43,18 @@ for (1..@{$bondtype2name_a}){
 	print $df "bond_coeff $_ @{$bond_lookup_h->{$name}}[1,2] #$name\n";
 }
 # constrained bond
+my $extra_bondtype = scalar @{$bondtype2name_a};# set the initial value 	
+for (0..$#{$cbond_a}){
+    $extra_bondtype++;
+    my $bondID = scalar(@{$bondobj_a}) + $_ + 1;
+    my @pairID = @{$cbond_a->[$_]}[0..1];
+	print $df "bond_coeff $extra_bondtype $constrain_bondk @{$cbond_a->[$_]}[2]" . " #constrained bond\n";
+}
 
 #fake bond
-my $type = scalar @{$bondtype2name_a} + 1;	
+$extra_bondtype++;
 #for (@{$ebond_a}){	
-	print $df "bond_coeff $type 0.0 2.5 #for fake bond only\n";
+	print $df "bond_coeff $extra_bondtype 0.0 2.5 #for fake bond only\n";
 #}
 
 print $df "\n";
