@@ -148,13 +148,21 @@ for (@Bdihobj4all){
 	my @temp_para = ($_->[4],$_->[6],$_->[7],$_->[5]);#current parameters from Bdihobj
 
 	if($atomobj[$a][1] le $atomobj[$d][1]){
-		$link = join ("-",@temp,@set_temp);
+		if($_->[4] eq 9){
+			$link = join ("-",@temp,@set_temp);
+		}else {
+			$link = join ("-",@temp,@temp_para);
+		}
 	}
 	else {
-		$link = join ("-",(reverse @temp),@set_temp);
+		if($_->[4] eq 9){
+			$link = join ("-",(reverse @temp),@set_temp);
+		}else {
+			$link = join ("-",(reverse @temp,@temp_para));
+		}
 	}
 # if fourier type exists. lmp format m (by array No.), k, n,degress
-	if($Bdih_lookup{"$link"}){# already exists
+	if($Bdih_lookup{"$link"}){# already exists and real Fourier
 		    my $check = 0;
 		for my $temp (@{$Bdih_lookup{"$link"}}){	
 			if(@temp_para ~~ @$temp){$check = 1;}# if two arrays are equal
@@ -195,11 +203,23 @@ for (@Sdihobj4all){
 
 	my @temp = ($atomobj[$a][1],$atomobj[$b][1],$atomobj[$c][1],$atomobj[$d][1]);
 	my $link;
-	if($atomobj[$a][1] le $atomobj[$d][1]){
-		$link = join ("-",@temp);}
-	else {$link = join ("-",reverse @temp);}
-# if fourier type exists.
 	my @temp_para = ($_->[4],$_->[6],$_->[5]);#current parameters from Bdihobj
+
+	if($atomobj[$a][1] le $atomobj[$d][1]){
+		if($_->[4] eq 9){
+			$link = join ("-",@temp,@set_temp);
+		}else {
+			$link = join ("-",@temp,@temp_para);
+		}
+	}
+	else {
+		if($_->[4] eq 9){
+			$link = join ("-",(reverse @temp),@set_temp);
+		}else {
+			$link = join ("-",(reverse @temp,@temp_para));
+		}
+	}
+	# if fourier type exists.
 	if($Sdih_lookup{"$link"}){# already exists
 		    my $check = 0;
 		for my $temp (@{$Sdih_lookup{"$link"}}){	
