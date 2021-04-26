@@ -19,12 +19,16 @@ print $df "\n";
 print $df scalar(@{$atomobj_a}) . " atoms\n";
 print $df scalar(@{$bondobj_a}) + scalar(@{$ebond_a}) + scalar(@{$cbond_a}) . " bonds\n";# real + fake bonds 
 print $df scalar(@{$angleobj_a}) . " angles\n";
-print $df scalar(@{$Bdihobj_a}) + scalar(@{$Sdihobj_a}) . " dihedrals\n";
+print $df scalar(@{$Bdihobj_a}) . " dihedrals\n";
+print $df scalar(@{$Sdihobj_a}) . " impropers\n";
+
+
 print $df "\n";
 print $df scalar(@{$atomtype_a}) . " atom types\n";
-print $df scalar(@{$bondtype2name_a}) + + scalar(@{$cbond_a}) + 1 . " bond types\n";# add one for fake bond
+print $df scalar(@{$bondtype2name_a}) + scalar(@{$cbond_a}) + 1 . " bond types\n";# add one for fake bond
 print $df scalar(@{$angletype2name_a}) . " angle types\n";
-print $df scalar(@{$Bdihtype2name_a}) + scalar(@{$Sdihtype2name_a}) . " dihedral types\n";
+print $df scalar(@{$Bdihtype2name_a}) . " dihedral types\n";
+print $df scalar(@{$Sdihtype2name_a}) . " improper types\n";
 print $df "\n";
 print $df "0.0 ". ${$grobox_a}[0][0]." xlo xhi\n";
 print $df "0.0 ". ${$grobox_a}[0][1]." ylo yhi\n";
@@ -95,11 +99,14 @@ for (1..@{$Bdihobj_a}){
 	print $df "$_ $type @BdihID" . " #$name\n";
 }
 ## side chain dihedral
-for (@{$Bdihobj_a} + 1..@{$Bdihobj_a} + @{$Sdihobj_a}){
-    my $key = $_ - scalar @{$Bdihobj_a};
+print $df "\n";
+print $df "Impropers\n";
+print $df "\n";
+for (1..@{$Sdihobj_a}){
+    my $key = $_;
     my $name = ${$SdihID2name_h}{$key};#from 1
-    my $type = scalar @{$Bdihtype2name_a} + scalar ${$Sdihname2type_h}{$name};# name to type ID
-    my @SdihID =  @{$Sdihobj_a->[$_ - @{$Bdihobj_a} - 1]}[0..3];#from 0
+    my $type = scalar ${$Sdihname2type_h}{$name};# name to type ID
+    my @SdihID =  @{$Sdihobj_a->[$_ - 1]}[0..3];#from 0
 	print $df "$_ $type @SdihID" . " #$name for sidechain\n";
 }
 

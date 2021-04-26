@@ -80,7 +80,7 @@ if(! @cbond) {die "No constrained bond information\n";}
 
 #exclusion pair (make fake bonds in lammps, but need to remove the duplicate ones from bond types!)
 #    1     6   ; DC
-my @temp = grep {if(m/^\s+(\d+)\s+(\d+)\s+\;?$/){$_ = [$1,$2];}} @mol_itp;
+my @temp = grep {if(m/^\s+(\d+)\s+(\d+)\s+;?\s*\w{0,2}$/){$_ = [$1,$2];}} @mol_itp;
 if(! @temp) {die "No exclusion bond information\n";}
 my @ebond;
 for (@temp){
@@ -188,7 +188,7 @@ my %Bdihname2type = map {$Bdihtype2name[$_ - 1] => $_ } 1..@Bdihtype2name;
 ##   (1)     (2)     (3)     (4)      (2)  (-90.00000)    (20) ; DC                                  Sidechain dihedrals
 # need to consider Fourier type
 my @Sdihobj4all = grep {if(m/^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(-?\d*\.\d*)\s+(-?\d+.?\d*)\s+\s*;.+/)
-	{$_ = [$1,$2,$3,$4,$5,$6,$7*$kj2kcal*0.5];}} @mol_itp;
+	{$_ = [$1,$2,$3,$4,$5,abs($6),$7*$kj2kcal*0.5];}} @mol_itp;
 if(! @Sdihobj4all) {die "No Sidechain dihedral information\n";}
 my @Sdihobj;
 my %Sdih_lookup; #look up table for dihedral parameters

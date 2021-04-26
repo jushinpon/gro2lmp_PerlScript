@@ -11,8 +11,9 @@ my %angsty;
    $angsty{2} = "cosine/squared";                      
 my %dihsty;
    $dihsty{1} = "fourier";                      
-   $dihsty{9} = "fourier";                      
-   $dihsty{2} = "quadratic";                      
+   $dihsty{9} = "fourier"; 
+my %impdihsty;                       
+   $impdihsty{2} = "quadratic";                      
 my $dielectric = 15.0;
 
 sub output_potential{
@@ -58,7 +59,7 @@ $extra_bondtype++;
 #}
 
 print $df "\n";
-print $df "angle_style hybrid $angsty{1} $angsty{2}\n";
+print $df "angle_style $angsty{2}\n";
 for (1..@{$angletype2name_a}){	
 	my $name = $angletype2name_a->[$_ - 1];
 	my $stlyeID = ${$angle_lookup_h->{$name}}[0];	
@@ -66,7 +67,7 @@ for (1..@{$angletype2name_a}){
 }
 
 print $df "\n";
-print $df "dihedral_style hybrid $dihsty{1} $dihsty{2}\n";
+print $df "dihedral_style $dihsty{1}\n";
 for (1..@{$Bdihtype2name_a}){	
 	my $name = $Bdihtype2name_a->[$_ - 1];
 	my $stlyeID = ${$Bdih_lookup_h->{$name}}[0][0];# hash-> two D array
@@ -79,12 +80,15 @@ for (1..@{$Bdihtype2name_a}){
 		print $df " #$name\n";
 	}
 }
-#side chain dihedral
-for (@{$Bdihtype2name_a}+1..@{$Bdihtype2name_a}+@{$Sdihtype2name_a}){	
-	my $name = $Sdihtype2name_a->[$_ - @{$Bdihtype2name_a} - 1];
+#side chain dihedral (improper in lammps)
+print $df "\n";
+print $df "improper_style $impdihsty{2}\n";
+
+for (1..@{$Sdihtype2name_a}){	
+	my $name = $Sdihtype2name_a->[$_ - 1];
 	my $stlyeID = ${$Sdih_lookup_h->{$name}}[0][0];# hash-> two D array
-	if($dihsty{$stlyeID} eq "quadratic"){	
-		print $df "dihedral_coeff $_ $dihsty{$stlyeID} @{$Sdih_lookup_h->{$name}->[0]}[1,2] #$name\n";
+	if($impdihsty{$stlyeID} eq "quadratic"){	
+		print $df "improper_coeff $_ @{$Sdih_lookup_h->{$name}->[0]}[1,2] #$name\n";
 		
 	}
 }
