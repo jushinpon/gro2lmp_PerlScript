@@ -13,7 +13,7 @@ my %dihsty;
    $dihsty{1} = "fourier";                      
    $dihsty{9} = "fourier"; 
 my %impdihsty;                       
-   $impdihsty{2} = "quadratic";                      
+   $impdihsty{2} = "hamonic";                      
 my $dielectric = 15.0;
 
 sub output_potential{
@@ -73,7 +73,7 @@ for (1..@{$Bdihtype2name_a}){
 	my $stlyeID = ${$Bdih_lookup_h->{$name}}[0][0];# hash-> two D array
 	if($dihsty{$stlyeID} eq "fourier"){	
 		my $mult = scalar @{$Bdih_lookup_h->{"$name"}};
-		print $df "dihedral_coeff $_ $dihsty{$stlyeID} $mult ";
+		print $df "dihedral_coeff $_ $mult ";
 		for my $ml (0..$mult-1){			
 			print $df " @{$Bdih_lookup_h->{$name}->[$ml]}[1..3]";
 		}
@@ -87,7 +87,7 @@ print $df "improper_style $impdihsty{2}\n";
 for (1..@{$Sdihtype2name_a}){	
 	my $name = $Sdihtype2name_a->[$_ - 1];
 	my $stlyeID = ${$Sdih_lookup_h->{$name}}[0][0];# hash-> two D array
-	if($impdihsty{$stlyeID} eq "quadratic"){	
+	if($impdihsty{$stlyeID} eq "hamonic"){	
 		print $df "improper_coeff $_ @{$Sdih_lookup_h->{$name}->[0]}[1,2] #$name\n";
 		
 	}
