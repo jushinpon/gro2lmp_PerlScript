@@ -8,12 +8,12 @@ $bondobj_a,$bond_lookup_h,$bondtype2name_a,$bondname2type_h,$bondID2name_h,
 $cbond_a,$ebond_a,
 $angleobj_a,$angle_lookup_h,$angletype2name_a,$anglename2type_h,$angleID2name_h,
 $Bdihobj_a,$Bdih_lookup_h,$Bdihtype2name_a,$Bdihname2type_h,$BdihID2name_h,
-$Sdihobj_a,$Sdih_lookup_h,$Sdihtype2name_a,$Sdihname2type_h,$SdihID2name_h,
+$Sdihobj_a,$Sdih_lookup_h,$Sdihtype2name_a,$Sdihname2type_h,$SdihID2name_h,$link_arraya,
 $nonbond_lookup_h) = @_;
-`rm -rf ./output_datafile/`;
-`mkdir output_datafile`;
+#`rm -rf ./output_datafile/`;
+#`mkdir output_datafile`;
 ############make data file
-open my $df, "> ./output_datafile/output.data"; 
+open my $df, "> output.data"; 
 print $df "#lammps data file from Perl script\n";
 print $df "\n";
 print $df scalar(@{$atomobj_a}) . " atoms\n";
@@ -102,12 +102,13 @@ for (1..@{$Bdihobj_a}){
 print $df "\n";
 print $df "Impropers\n";
 print $df "\n";
-for (1..@{$Sdihobj_a}){
-    my $key = $_;
-    my $name = ${$SdihID2name_h}{$key};#from 1
-    my $type = scalar ${$Sdihname2type_h}{$name};# name to type ID
-    my @SdihID =  @{$Sdihobj_a->[$_ - 1]}[0..3];#from 0
-	print $df "$_ $type @SdihID" . " #$name for sidechain\n";
+for (1..@{$Sdihobj_a}){#@{$Sdihobj_a}
+	my $Sdihcounter = $_ - 1;
+	print "${$link_arraya}[$Sdihcounter]\n";
+    my $type = scalar ${$Sdihname2type_h}{${$link_arraya}[$Sdihcounter]};# name to type ID
+    my @SdihID =  @{$Sdihobj_a->[$Sdihcounter]}[0..3];#from 0
+	print $df "$_ $type @SdihID" . " #${$link_arraya}[$Sdihcounter] for sidechain\n";
+	#}
 }
 
 close($df);
