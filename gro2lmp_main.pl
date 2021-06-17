@@ -1,3 +1,16 @@
+#Nonbonding transfer rules
+#[ defaults ]
+#; nbfunct  comb-rule
+#  1        2
+#[ nonbond_params ]
+#      P2       P2  1  4.700000e-01 4.500000e+00
+#                      $c6          $c12
+#If "comb-rule" is 1
+#sigma=($c12/$c6)**(1/6)
+#epsilon=$c6/(4*$sigma**6)
+#If "comb-rule" is 2
+#sigma=$c6
+#epsilon=$c12
 use warnings;
 use strict;
 use Data::Dumper;
@@ -5,11 +18,8 @@ require './output_datafile.pl';
 require './output_potential.pl';
 my $molecule_itp = "Nucleic_A.itp";
 my $forcefield_itp = "martini_v2.1-dna.itp";# for non-bond parameters
-my $input = "box.gro"; # pdb or gro
+my $input = "box.gro"; # gro
 
-my $filenamein = "ssDNA";
-my $filenamedata = "ssDNA";
-my $forceconstant = "200";
 my $kj2kcal = "0.2390057361";
 my $pairstyle = "lj/gromacs/coul/gromacs 9.0 11.0  0.000001 11.0";
 my $water = "no";
@@ -188,12 +198,13 @@ my %Bdihname2type = map {$Bdihtype2name[$_ - 1] => $_ } 1..@Bdihtype2name;
 ##   (1)     (2)     (3)     (4)      (2)  (-90.00000)    (20) ; DC                                  Sidechain dihedrals
 # need to consider Fourier type
 my @Sdihobj4all = grep {if(m/^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(-?\d*\.\d*)\s+(-?\d+.?\d*)\s+\s*;.+/)
-	{$_ = [$1,$2,$3,$4,$5,abs($6),$7*$kj2kcal*0.5];}} @mol_itp;
+	{$_ = [$1,$2,$3,$4,$5,abs($6),$7*0.5*$kj2kcal];}} @mol_itp;
 if(! @Sdihobj4all) {die "No Sidechain dihedral information\n";}
 my @Sdihobj;
 my %Sdih_lookup; #look up table for dihedral parameters
 my $Sdc = 1; #side chain dih counter
 my %SdihID2name;
+my @link_array;
 for (@Sdihobj4all){
 	my $a = $_->[0] - 1;# array ID of the first bead 
 	my $b = $_->[1] - 1;# array ID of the second bead
@@ -220,19 +231,27 @@ for (@Sdihobj4all){
 		}
 	}
 	# if fourier type exists.
-	if($Sdih_lookup{"$link"}){# already exists
+if($Sdih_lookup{"$link"}){# already exists
 		    my $check = 0;
 		for my $temp (@{$Sdih_lookup{"$link"}}){	
-			if(@temp_para ~~ @$temp){$check = 1;}# if two arrays are equal
+			if(@temp_para ~~ @$temp){
+			$check = 1;
+			push @Sdihobj,[@{$_}[0..3]];
+			
+			}# if two arrays are equal
 		}
-		if($check == 0){push @{$Sdih_lookup{"$link"}}, [@temp_para];}# no duplicate parameters for the same key
+		if($check == 0){
+			push @{$Sdih_lookup{"$link"}}, [@temp_para];
+			}# no duplicate parameters for the same key
 	}
 	else{
 		$Sdih_lookup{"$link"} = [[@temp_para]]; #hash -> 2D array, for keeping parameters possible with Fourier
-	    push @Sdihobj,[@{$_}[0..3]];
 	    $SdihID2name{"$Sdc"} = "$link";
-	    $Sdc++;
+		push @Sdihobj,[@{$_}[0..3]];
+		$Sdc++;
+		#print "@{$_}[0..3]\n";
 	}
+	push @link_array , "$link";
 }
 #print Dumper(\@Sdihobj);
 #print Dumper(\%SdihID2name);
@@ -287,7 +306,7 @@ for my $t1 (0..$#atomtype)
 \@cbond,\@ebond,# other bond treatments
 \@angleobj,\%angle_lookup,\@angletype2name,\%anglename2type,\%angleID2name,# information about bending
 \@Bdihobj,\%Bdih_lookup,\@Bdihtype2name,\%Bdihname2type,\%BdihID2name,# information about backbone dihedral
-\@Sdihobj,\%Sdih_lookup,\@Sdihtype2name,\%Sdihname2type,\%SdihID2name,#information about side chain dihedral
+\@Sdihobj,\%Sdih_lookup,\@Sdihtype2name,\%Sdihname2type,\%SdihID2name,\@link_array,#information about side chain dihedral
 \%nonbond_lookup # non-bond information
 );
 #make potential file
